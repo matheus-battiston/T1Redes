@@ -69,13 +69,7 @@ class receiver_saw:
 
         return False
 
-    def redundant(self, seqno):
-        print(seqno, self.seqno)
-        if seqno == self.seqno:
-            return True
-
-        return False
-
+"""Configurar dados ==================="""
 def define_algo(argumentos):
     if argumentos[0] == 'saw' or argumentos[0] == 'gbn' or argumentos[0] == 'sr':
         return argumentos[0]
@@ -105,7 +99,13 @@ def define_pkt(argumentos):
     else:
         numeros = [int(x) for x in argumentos[3].split(',')]
         return numeros
+"""Configurar dados ==================="""
 
+
+
+
+
+"""Executar o simulador"""
 
 def executar(algo, num_frames, seq_bits, pkt_loss):
     pacotes = 1
