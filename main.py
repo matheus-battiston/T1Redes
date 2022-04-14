@@ -2,72 +2,91 @@ import sys
 
 
 class sender_saw:
-    def __init__(self, nro_frames):
-        self.N = 0
-        self.nro_frames = nro_frames
-        self.frame = []
-        self.seqno = 0
+
+    def __init__(self, pkt_loss, num_frames):
+        self.Sn = 0
+        self.pkt_loss = pkt_loss
+        self.num_frames = num_frames
+        self.seq = []
+        self.Enviando = 1
+        self.confirmation = True
         self.retry = False
 
-        for x in range(0, int(nro_frames)):
-            if x % 2 == 0:
-                self.frame.append(0)
-            else:
-                self.frame.append(1)
+        for x in range (0,999):
+            self.seq.append(x%2)
 
     def send(self):
-        if not self.retry:
-            print("A ->> B : (", self.N + 1, ") Frame ", self.seqno)
-            self.retry = False
-            return self.seqno
-        else:
-            print("A ->> B : (", self.N + 1, ") Frame ", self.seqno, "(RET)")
-            self.retry = False
-            return self.seqno
+        self.confirmation = False
+        return self.seq[self.Sn]
 
-    def send_fail(self):
-        print("A -x B : (", self.N + 1, ") Frame ", self.seqno)
-        print("Note over A : TIMEOUT (", self.N + 1, ")")
-        self.retry = True
 
-    def receive(self, ack):
-        if type(ack) == int:
-            self.seqno = ack
-            self.N += 1
-        else:
-            if self.seqno == 0:
-                seq_1 = 1
-            else:
-                seq_1 = 0
+    def receive_confirmation(self, confirmation,ack):
+        if not confirmation:
+            print("A -x B : ", self.Enviando, " Frame ", self.seq[self.Sn])
+            print('Note over A: TIMEOUT(',self.Enviando, ")")
             self.retry = True
+        elif self.retry:
+            print("A ->> B : ", self.Enviando, " Frame ", self.seq[self.Sn], "(RET)")
+            print("B -->> A : Ack", ack)
+            self.Sn+=1
+            self.Enviando +=1
+            self.retry = False
+        else:
+            print("A ->> B : ", self.Enviando, " Frame ", self.seq[self.Sn])
+            print("B -->> A : Ack", ack)
 
+            self.Sn +=1
+            self.Enviando +=1
 
 class receiver_saw:
     def __init__(self, nro_frames):
-        self.seqno = 1
-        self.frame = []
-        self.primeiro = True
+        self.Sn = 1
+        self.seq = []
 
-        for x in range(0, int(nro_frames)):
-            if x % 2 == 0:
-                self.frame.append(0)
-            else:
-                self.frame.append(1)
+        for x in range(0,999):
+            self.seq.append(x%2)
 
 
-    def confirma(self):
-        print("B --> A: Ack ", self.seqno)
-        antigo = self.seqno
-        if self.seqno == 0:
-            self.seqno = 1
-        else:
-            self.seqno = 0
-        return antigo
-
-    def confirma_loss(self):
-        print("B --x A: Ack ", self.seqno)
+    def is_redundant(self,seq_frame):
+        if self.seq[self.Sn] == seq_frame:
+            return True
 
         return False
+
+    def receive(self,seqno):
+        if not self.is_redundant(seqno):
+            self.Sn +=1
+            return self.seq[self.Sn-1]
+        else:
+            return self.seq[self.Sn]
+
+
+def executar(algo, num_frames, seq_bits, pkt_loss):
+    sender = sender_saw(pkt_loss,num_frames)
+    receiver = receiver_saw(num_frames)
+    sucesso = 0
+    pacotes = 1
+
+    while sucesso < 10:
+        enviado = sender.send()
+        if pacotes not in pkt_loss:
+            pacotes += 1
+            recebido = receiver.receive(enviado)
+            if pacotes not in pkt_loss:
+                pacotes+=1
+                sender.receive_confirmation(True,recebido)
+                sucesso +=1
+            else:
+                print("B -x A : Ack", recebido)
+                pacotes+=1
+                sender.receive_confirmation(False,recebido)
+        else:
+            sender.send()
+            sender.receive_confirmation(False,None)
+            pacotes+=1
+
+
+
 
 """Configurar dados ==================="""
 def define_algo(argumentos):
@@ -102,36 +121,11 @@ def define_pkt(argumentos):
 """Configurar dados ==================="""
 
 
-
-
-
 """Executar o simulador"""
 
-def executar(algo, num_frames, seq_bits, pkt_loss):
-    pacotes = 1
-    sender = sender_saw(num_frames)
-    receiver = receiver_saw(num_frames)
-    sucesso = 0
-
-    while (sucesso < 10):
-        if pacotes in pkt_loss:
-            sender.send_fail()
-            pacotes += 1
-        else:
-            seqno = sender.send()
-            pacotes += 1
-            if pacotes in pkt_loss:
-                pacotes += 1
-                ack = receiver.confirma_loss()
-            else:
-                pacotes +=1
-                ack = receiver.confirma()
-                sucesso += 1
-
-            sender.receive(ack)
 
 if __name__ == '__main__':
-    argumentos = sys.argv[1:]
+    #argumentos = sys.argv[1:]
     argumentos = ["saw", "1", "10", "3,10,15"]
     algo = define_algo(argumentos)
     num_frames = define_numframes(argumentos)
