@@ -23,6 +23,7 @@ class sender_gbn:
 
     def timeout(self):
         if self.timer == 20:
+            print("TIMEOUT")
             return True
 
         return False
@@ -83,7 +84,6 @@ class receiver_gbn:
 
     def confirma(self):
         if len(self.recebidos) > 0:
-
             aux = self.recebidos.pop(0)
             if aux < self.window:
                 if aux == 3:
@@ -115,8 +115,9 @@ def executar_gbn(num_frames,seq_bits,pkt_loss):
                 else:
                     print("A ->> B : ", frame, " Frame ", enviado, "(RET)")
 
-
                 receiver.receive(enviado)
+            else:
+                print("A -x B : ", frame, " Frame ", enviado)
 
             pacotes +=1
         else:
@@ -127,6 +128,10 @@ def executar_gbn(num_frames,seq_bits,pkt_loss):
                 confirmados = sender.receive_confirmation(recebido)
 
                 pacotes +=1
-                sucesso +=1
+                sucesso +=confirmados
+            elif pacotes in pkt_loss:
+                print("B --x A : Ack", recebido)
+                pacotes +=1
+
 
         enviados.append(frame)

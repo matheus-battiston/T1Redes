@@ -48,7 +48,7 @@ def executar(algo,num_frames,seq_bits,pkt_loss):
 
 if __name__ == '__main__':
     #argumentos = sys.argv[1:]
-    argumentos = ["gbn", "2", "20", "5"]
+    argumentos = ["gbn", "2", "20", "6"]
     algo = define_algo(argumentos)
     num_frames = define_numframes(argumentos)
     seq_bits = define_seqbits(argumentos)
