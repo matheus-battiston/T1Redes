@@ -101,6 +101,7 @@ def executar_gbn(num_frames,seq_bits,pkt_loss):
     sender = sender_gbn(seq_bits)
     receiver = receiver_gbn(seq_bits)
     pacotes = 1
+    enviados = []
 
     while sucesso < num_frames:
         if pacotes > 45:
@@ -109,7 +110,12 @@ def executar_gbn(num_frames,seq_bits,pkt_loss):
         if sender.pode_enviar() and sender.ultimo_janela < num_frames:
             enviado,frame = sender.send()
             if pacotes not in pkt_loss:
-                print("A ->> B : ", frame, " Frame ", enviado)
+                if frame not in enviados:
+                    print("A ->> B : ", frame, " Frame ", enviado)
+                else:
+                    print("A ->> B : ", frame, " Frame ", enviado, "(RET)")
+
+
                 receiver.receive(enviado)
 
             pacotes +=1
@@ -123,3 +129,4 @@ def executar_gbn(num_frames,seq_bits,pkt_loss):
                 pacotes +=1
                 sucesso +=1
 
+        enviados.append(frame)
