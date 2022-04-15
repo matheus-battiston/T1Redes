@@ -8,8 +8,7 @@ class sender_saw:
         self.confirmation = True
         self.retry = False
 
-        for x in range (0,999):
-            self.seq.append(x%2)
+        self.seq = [0,1] * 500
 
     def send(self):
         self.confirmation = False
@@ -39,8 +38,7 @@ class receiver_saw:
         self.Sn = 1
         self.seq = []
 
-        for x in range(0,999):
-            self.seq.append(x%2)
+        self.seq = [0,1] * 500
 
 
     def is_redundant(self,seq_frame):
