@@ -16,7 +16,7 @@ def define_seqbits(argumentos):
     if not argumentos[1].isnumeric():
         print('Formato de entrada invalido')
         exit()
-    return argumentos[1]
+    return int(argumentos[1])
 
 
 def define_numframes(argumentos):
@@ -24,7 +24,7 @@ def define_numframes(argumentos):
         print('Formato de entrada invalido')
         exit()
     else:
-        return argumentos[2]
+        return int(argumentos[2])
 
 
 def define_pkt(argumentos):
@@ -48,7 +48,7 @@ def executar(algo,num_frames,seq_bits,pkt_loss):
 
 if __name__ == '__main__':
     #argumentos = sys.argv[1:]
-    argumentos = ["sr", "1", "10", "3,10,15"]
+    argumentos = ["gbn", "2", "20", "5"]
     algo = define_algo(argumentos)
     num_frames = define_numframes(argumentos)
     seq_bits = define_seqbits(argumentos)
