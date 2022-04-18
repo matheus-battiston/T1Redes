@@ -7,6 +7,7 @@ class Timer:
         self.seqno = -1
         self.tempo = 0
 
+
 class SenderSR:
     def __init__(self, num_frames, seq_bits):
         self.Sn = 0
@@ -106,7 +107,8 @@ class ReceiverSR:
                 break
             x += 1
 
-def executarSR2(num_frames, seq_bits, pkt_loss):
+
+def executarsr(num_frames, seq_bits, pkt_loss):
     sender = SenderSR(num_frames, seq_bits)
     receiver = ReceiverSR(seq_bits, num_frames)
     naks = []
@@ -119,7 +121,7 @@ def executarSR2(num_frames, seq_bits, pkt_loss):
             enviado = sender.send()
             if pacote not in pkt_loss:
                 recebido = receiver.receive(enviado)
-            if recebido != None:
+            if recebido is not None:
                 naks.append(recebido)
         else:
             print(receiver.enviados)
@@ -129,7 +131,3 @@ def executarSR2(num_frames, seq_bits, pkt_loss):
             elif len(naks) > 0:
                 enviado = sender.receive_confirmation(naks.pop(0))
                 receiver.receive(enviado)
-
-
-
-

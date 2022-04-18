@@ -20,6 +20,7 @@ class Sender:
         self.pode_enviar = False
         return self.seq[self.Sn - 1]
 
+
 class Receiver:
     def __init__(self):
         self.Rn = 0
@@ -37,7 +38,7 @@ class Receiver:
         return self.seq[self.Rn]
 
 
-def executar_SAW(num_frames,seq_bits,pkt_loss):
+def executar_saw(num_frames, pkt_loss):
     sender = Sender()
     receiver = Receiver()
     pacotes = 0
@@ -61,7 +62,7 @@ def executar_SAW(num_frames,seq_bits,pkt_loss):
             else:
                 print("B --x A : Ack", confirma)
         else:
-            print('Note over A: TIMEOUT(', sender.Sn,')')
+            print('Note over A: TIMEOUT(', sender.Sn, ')')
             pacotes += 1
             enviado = sender.resend()
             if pacotes not in pkt_loss:
@@ -69,12 +70,3 @@ def executar_SAW(num_frames,seq_bits,pkt_loss):
                 receiver.receive(enviado)
             else:
                 print("A -x B : ", sender.Sn, " Frame ", enviado, '(RET)')
-
-
-
-
-
-
-
-
-
