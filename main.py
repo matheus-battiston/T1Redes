@@ -3,10 +3,11 @@ from SAW import *
 from GBN import *
 from SR import *
 from SR2 import *
+from SAW2 import *
 
 """Configurar dados ==================="""
 def define_algo(argumentos):
-    if argumentos[0] == 'saw' or argumentos[0] == 'gbn' or argumentos[0] == 'sr':
+    if argumentos[0] == 'saw2' or argumentos[0] == 'gbn' or argumentos[0] == 'sr':
         return argumentos[0]
     else:
         print('Formato de entrada inválido')
@@ -40,8 +41,8 @@ def define_pkt(argumentos):
 """Executar o simulador"""
 
 def executar(algo,num_frames,seq_bits,pkt_loss):
-    if algo =="saw":
-        executar_saw(algo,num_frames,seq_bits,pkt_loss)
+    if algo =="saw2":
+        executar_SAW(num_frames,seq_bits,pkt_loss)
     elif algo == "gbn":
         executar_gbn(num_frames,seq_bits,pkt_loss)
     elif algo == "sr":
@@ -49,7 +50,7 @@ def executar(algo,num_frames,seq_bits,pkt_loss):
 
 if __name__ == '__main__':
     #argumentos = sys.argv[1:]
-    argumentos = ["sr", "4", "20", "1,3,5"]
+    argumentos = ["saw2", "1", "4", "1,3"]
     algo = define_algo(argumentos)
     num_frames = define_numframes(argumentos)
     seq_bits = define_seqbits(argumentos)

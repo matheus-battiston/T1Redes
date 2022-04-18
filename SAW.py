@@ -8,7 +8,7 @@ class sender_saw:
         self.confirmation = True
         self.retry = False
 
-        self.seq = [0,1] * 500
+        self.seq = [0, 1] * 500
 
     def send(self):
         self.confirmation = False
@@ -54,7 +54,7 @@ class receiver_saw:
             return self.seq[self.Sn]
 
 
-def executar_saw(algo, num_frames, seq_bits, pkt_loss):
+def executar_saw22222(algo, num_frames, seq_bits, pkt_loss):
     sender = sender_saw(pkt_loss,num_frames)
     receiver = receiver_saw(num_frames)
     sucesso = 0
@@ -66,14 +66,15 @@ def executar_saw(algo, num_frames, seq_bits, pkt_loss):
             pacotes += 1
             recebido = receiver.receive(enviado)
             if pacotes not in pkt_loss:
-                pacotes+=1
+                pacotes += 1
                 sender.receive_confirmation(True,recebido)
-                sucesso +=1
+                sucesso += 1
             else:
                 print("B -x A : Ack", recebido)
-                pacotes+=1
+                pacotes += 1
                 sender.receive_confirmation(False,recebido)
         else:
+            print(pacotes, 'AAA')
             sender.send()
             sender.receive_confirmation(False,None)
-            pacotes+=1
+            pacotes += 1
