@@ -37,7 +37,6 @@ class receiver_saw:
     def __init__(self, nro_frames):
         self.Sn = 1
         self.seq = []
-
         self.seq = [0,1] * 500
 
 

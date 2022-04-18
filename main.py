@@ -2,6 +2,7 @@ import sys
 from SAW import *
 from GBN import *
 from SR import *
+from SR2 import *
 
 """Configurar dados ==================="""
 def define_algo(argumentos):
@@ -44,11 +45,11 @@ def executar(algo,num_frames,seq_bits,pkt_loss):
     elif algo == "gbn":
         executar_gbn(num_frames,seq_bits,pkt_loss)
     elif algo == "sr":
-        executar_sr(num_frames,seq_bits,pkt_loss)
+        executarSR2(num_frames,seq_bits,pkt_loss)
 
 if __name__ == '__main__':
     #argumentos = sys.argv[1:]
-    argumentos = ["gbn", "2", "20", "6"]
+    argumentos = ["sr", "4", "20", "1,3,5"]
     algo = define_algo(argumentos)
     num_frames = define_numframes(argumentos)
     seq_bits = define_seqbits(argumentos)
