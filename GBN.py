@@ -12,6 +12,7 @@ class Sender:
         for x in range(0, self.janela + 1):
             self.seq.append(x)
         self.seq = self.seq*100
+        self.Sn = 0
 
     def incrementa_timer(self):
         if self.timeout():
@@ -22,8 +23,8 @@ class Sender:
         self.timer += 1
 
     def timeout(self):
-        if self.timer == 20:
-            print("TIMEOUT")
+        if self.timer == 100:
+            print('Note over A: TIMEOUT(', self.primeiro_janela+1, ')',sep="")
             return True
 
         return False
@@ -38,22 +39,21 @@ class Sender:
         self.ultimo_janela += 1
         self.prox_envio += 1
         self.pendentes += 1
+        self.Sn += 1
         return self.seq[self.prox_envio - 1], self.prox_envio
 
     def receive_confirmation(self, ack):
+        aux = self.primeiro_janela
         contador = 0
         x = self.primeiro_janela
         ultimo = self.ultimo_janela
         self.timer = 0
 
-        while x <= ultimo:
-            if self.seq[x] != ack:
-                self.primeiro_janela += 1
-                contador += 1
-            else:
-                break
+        while ack != self.seq[aux]:
+            self.primeiro_janela += 1
+            contador += 1
+            aux += 1
 
-            x += 1
         self.pendentes -= contador
         return contador
 
@@ -65,33 +65,29 @@ class Receiver:
         self.seq_bits = seq_bits
         self.seq = []
         self.janela = 0
+        self.Rn = 0
 
         aux = (2 ** seq_bits) - 1
         self.window = aux
-        for x in range(0, aux + 1):
+        for x in range(0, aux+1):
             self.seq.append(x)
 
         self.seq = self.seq*100
 
     def receive(self, frame):
-        if frame == self.seq[self.janela]:
+        if frame == self.seq[self.Rn]:
             self.recebidos.append(frame)
             self.janela += 1
-        else:
-            pass
+            self.Rn += 1
 
     def confirma(self):
+        return self.seq[self.recebidos.pop(0) + 1]
+
+    def ackNeeded(self):
         if len(self.recebidos) > 0:
-            aux = self.recebidos.pop(0)
-            if aux < self.window:
-                if aux == 3:
-                    return 0
-                else:
-                    return aux+1
-            else:
-                return 0
-        else:
-            return -1
+            return True
+
+        return False
 
 
 def executar_gbn(num_frames, seq_bits, pkt_loss):
@@ -103,21 +99,22 @@ def executar_gbn(num_frames, seq_bits, pkt_loss):
 
     while sucesso < num_frames:
         sender.incrementa_timer()
-        if sender.pode_enviar() and sender.ultimo_janela < num_frames:
+        while sender.pode_enviar() and sender.ultimo_janela < num_frames:
             enviado, frame = sender.send()
             if pacotes not in pkt_loss:
                 if frame not in enviados:
-                    print("A ->> B : ", frame, " Frame ", enviado)
+                    print("A ->> B : (", frame, ") Frame ", enviado, sep="")
                 else:
-                    print("A ->> B : ", frame, " Frame ", enviado, "(RET)")
+                    print("A ->> B : (", frame, ") Frame ", enviado, " (RET)",sep="")
 
                 receiver.receive(enviado)
             else:
-                print("A -x B : ", frame, " Frame ", enviado)
+                print("A -x B : (", frame, ") Frame ", enviado, sep="")
 
             pacotes += 1
             enviados.append(frame)
-        else:
+
+        while receiver.ackNeeded():
             recebido = receiver.confirma()
             if pacotes not in pkt_loss and (recebido != -1):
                 print("B -->> A : Ack", recebido)

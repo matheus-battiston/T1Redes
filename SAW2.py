@@ -49,9 +49,9 @@ def executar_saw(num_frames, pkt_loss):
             enviado = sender.send()
             if pacotes not in pkt_loss:
                 receiver.receive(enviado)
-                print('A ->> B : (', sender.Sn, ') Frame ', enviado)
+                print('A ->> B : (', sender.Sn, ') Frame ', enviado,sep="")
             else:
-                print('A -x B : (', sender.Sn, ') Frame ', enviado)
+                print('A -x B : (', sender.Sn, ') Frame ', enviado,sep="")
 
         elif receiver.confirma:
             pacotes += 1
@@ -62,11 +62,11 @@ def executar_saw(num_frames, pkt_loss):
             else:
                 print("B --x A : Ack", confirma)
         else:
-            print('Note over A: TIMEOUT(', sender.Sn, ')')
+            print('Note over A: TIMEOUT(', sender.Sn, ')',sep="")
             pacotes += 1
             enviado = sender.resend()
             if pacotes not in pkt_loss:
-                print("A ->> B : (", sender.Sn, ") Frame ", enviado, '(RET)')
+                print("A ->> B : (", sender.Sn, ") Frame ", enviado, ' (RET)', sep="")
                 receiver.receive(enviado)
             else:
-                print("A -x B : (", sender.Sn, ") Frame ", enviado, '(RET)')
+                print("A -x B : (", sender.Sn, ") Frame ", enviado, ' (RET)', sep="")
