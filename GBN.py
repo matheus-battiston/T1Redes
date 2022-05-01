@@ -17,7 +17,7 @@ class Sender:
     # Função para simular um timeout
     # Irá retornar todos os valores para o começo da janela para começar a reenviar todos os frames
     def timeout(self):
-        print('Note over A: TIMEOUT(', self.primeiro_janela + 1, ')', sep="")
+        print('Note over A: TIMEOUT (', self.primeiro_janela + 1, ')', sep="")
         self.prox_envio = self.primeiro_janela
         self.pendentes = 0
         self.ultimo_janela = self.primeiro_janela

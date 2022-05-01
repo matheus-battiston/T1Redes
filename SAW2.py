@@ -76,7 +76,7 @@ def executar_saw(num_frames, pkt_loss):
                 print("B --x A : Ack", confirma)
         else:
             # Se nao possa enviar frame ou receber ack sera simulado um timeout e o frame será reenviado
-            print('Note over A: TIMEOUT(', sender.Sn, ')', sep="")
+            print('Note over A: TIMEOUT (', sender.Sn, ')', sep="")
             pacotes += 1
             enviado = sender.resend()
             if pacotes not in pkt_loss:

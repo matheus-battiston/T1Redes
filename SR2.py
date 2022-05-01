@@ -256,17 +256,17 @@ def executarsr(num_frames, seq_bits, pkt_loss):
                 # portanto, é checado se essa identificação existe para formatar o print
                 if type(enviado) is not int:
                     receiver.receive(enviado[1])
-                    print('A ->> B : (', receiver.get_pos(enviado[1]) + 1, ') Frame ', enviado[1], "(RET)", sep=" ")
+                    print('A ->> B : (', receiver.get_pos(enviado[1]) + 1, ') Frame ', enviado[1], "(RET)", sep="")
                 else:
                     receiver.receive(enviado)
-                    print('A ->> B : (', sender.Sn, ') Frame ', enviado, sep=" ")
+                    print('A ->> B : (', sender.Sn, ') Frame ', enviado, sep="")
             else:
                 # Caso o pacote esteja entre os que devem ser perdidos nada acontece alem dos prints
                 # Mesma checagem anterior para saber se é um frame reenviado ou não
                 if type(enviado) is not int:
-                    print('A -x B : (', receiver.get_pos(enviado[1]), ') Frame ', enviado[1], "(RET)", sep=" ")
+                    print('A -x B : (', receiver.get_pos(enviado[1]), ') Frame ', enviado[1], "(RET)", sep="")
                 else:
-                    print('A -x B : (', sender.Sn, ') Frame ', enviado, sep=" ")
+                    print('A -x B : (', sender.Sn, ') Frame ', enviado, sep="")
 
         # Caso nao se possa enviar nenhum frame, a prioridade é para enviar os acks
         # Pemanecerá nesse laço enquanto tiverem acks para mandar
@@ -276,9 +276,9 @@ def executarsr(num_frames, seq_bits, pkt_loss):
             if pacote not in pkt_loss:
                 # Caso o pacote nao esteja entre os que devem ser perdidos, o sender recebe o ack
                 sender.receive_confirmation(ack)
-                print("B -->> A : ACK", ack[1])
+                print("B -->> A : Ack", ack[1])
             else:
-                print("B --x A : ACK", ack[1])
+                print("B --x A : Ack", ack[1])
 
         # Caso exista a necessidade de enviar naks
         if receiver.nakNeeded:
@@ -305,11 +305,11 @@ def executarsr(num_frames, seq_bits, pkt_loss):
             if timeout is not None:
                 # Caso algum frame tenha tido timeout será reenviado
                 pacote += 1
-                print('Note over A: TIMEOUT(', timeout + 1, ')', sep=" ")
+                print('Note over A: TIMEOUT (', timeout + 1, ')', sep="")
                 enviado = sender.resend(sender.janela[timeout])
                 if pacote not in pkt_loss:
                     # Caso o pacote nao esteja entre os que devem ser perdidos o receiver recebera o pacote
-                    print("A ->> B : (", timeout + 1, ") Frame ", enviado, " (RET)", sep=" ")
+                    print("A ->> B : (", timeout + 1, ") Frame ", enviado, " (RET)", sep="")
                     receiver.receive(enviado)
                 else:
-                    print("A -x B : (", timeout + 1, ") Frame ", enviado, " (RET)", sep=" ")
+                    print("A -x B : (", timeout + 1, ") Frame ", enviado, " (RET)", sep="")
