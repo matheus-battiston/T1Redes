@@ -59,11 +59,12 @@ class Sender:
 # Classe para simular o receiver do Go Back n
 class Receiver:
 
-    def __init__(self, seq_bits):
+    def __init__(self, seq_bits, num_frames):
         self.recebidos = []  # Lista que armazena os frames que forem recebidos
         self.seq_bits = seq_bits
         self.seq = []  # Lista que terá os números de sequencia
         self.Rn = 0  # Variavel para controlar qual o frame esperado.
+        self.acks_enviados = [False] * num_frames
 
         aux = (2 ** seq_bits) - 1
         for x in range(0, aux + 1):
@@ -84,7 +85,9 @@ class Receiver:
     # Função que irá enviar um ack
     # Pop sempre será feito no primeiro elemento da lista para confirmar em ordem
     def confirma(self):
-        return self.seq[self.recebidos.pop(0) + 1]
+        x = self.recebidos.pop(0)
+        self.acks_enviados[x] = True
+        return self.seq[x+1]
 
     # Função para definir se existe um ack a ser mandado
     def ackNeeded(self):
@@ -96,38 +99,29 @@ class Receiver:
     # Função que checa se o frame recebido é duplicado
     # Garante que nao checara o numero errado caso tenham sido enviados menos frames que a o tamanho da janela
     def check_duplicate(self, frame):
-        janela = 2 ** self.seq_bits - 1
-        aux = self.Rn - 1
-        aux2 = self.get_pos(frame)
-        aux3 = self.get_pos(frame) - janela
-        if aux3 < 0:
-            aux3 = 0
-        if aux2 == 0:
-            return False
+        x = self.get_pos(frame)
+        if self.acks_enviados[self.get_pos(frame)]:
+            return True
 
-        while aux2 > aux3:
-            if frame == self.seq[aux2-1]:
-                return True
-            aux2 -= 1
         return False
 
     def get_pos(self, frame):
         x = self.Rn
 
-        while x <= self.Rn + (2 ** self.seq_bits) - 1:
+        while x < self.Rn + (2 ** self.seq_bits) - 1:
             if frame == self.seq[x]:
                 return x
             x += 1
+        return self.Rn - 1
 
 
 # Simula a execução completa
 def executar_gbn(num_frames, seq_bits, pkt_loss):
     sucesso = 0
     sender = Sender(seq_bits)
-    receiver = Receiver(seq_bits)
+    receiver = Receiver(seq_bits, num_frames)
     pacotes = 1
     enviados = []  # Lista para guardar os frames enviados
-
     # Preferencia para enviar frames. Irá continuar no laço enquanto nao forem todos confirmados
     while sucesso < num_frames:
         # Preferencia para o envio de frames, irá continuar nesse laço enquanto puder enviar frames
