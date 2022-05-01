@@ -98,7 +98,7 @@ class Receiver:
     def check_duplicate(self, frame):
         aux = self.Rn - 1
         if self.Rn < (2 ** self.seq_bits) - 1:
-            while aux >= 0 and aux > self.Rn:
+            while aux >= 0:
                 if frame == self.seq[aux]:
                     return True
                 aux -= 1
@@ -134,7 +134,10 @@ def executar_gbn(num_frames, seq_bits, pkt_loss):
                     print("A ->> B : (", frame, ") Frame ", enviado, " (RET)", sep="")
 
             else:
-                print("A -x B : (", frame, ") Frame ", enviado, sep="")
+                if frame not in enviados:
+                    print("A -x B : (", frame, ") Frame ", enviado, sep="")
+                else:
+                    print("A -x B : (", frame, ") Frame ", enviado," (RET)", sep="")
 
             pacotes += 1
             enviados.append(frame)
