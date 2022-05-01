@@ -256,7 +256,7 @@ def executarsr(num_frames, seq_bits, pkt_loss):
                 # portanto, é checado se essa identificação existe para formatar o print
                 if type(enviado) is not int:
                     receiver.receive(enviado[1])
-                    print('A ->> B : (', receiver.get_pos(enviado[1]) + 1, ') Frame ', enviado[1], "(RET)", sep="")
+                    print('A ->> B : (', receiver.get_pos(enviado[1]) + 1, ') Frame ', enviado[1], " (RET)", sep="")
                 else:
                     receiver.receive(enviado)
                     print('A ->> B : (', sender.Sn, ') Frame ', enviado, sep="")
@@ -264,7 +264,7 @@ def executarsr(num_frames, seq_bits, pkt_loss):
                 # Caso o pacote esteja entre os que devem ser perdidos nada acontece alem dos prints
                 # Mesma checagem anterior para saber se é um frame reenviado ou não
                 if type(enviado) is not int:
-                    print('A -x B : (', receiver.get_pos(enviado[1]), ') Frame ', enviado[1], "(RET)", sep="")
+                    print('A -x B : (', receiver.get_pos(enviado[1]), ') Frame ', enviado[1], " (RET)", sep="")
                 else:
                     print('A -x B : (', sender.Sn, ') Frame ', enviado, sep="")
 
