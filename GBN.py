@@ -11,13 +11,13 @@ class Sender:
         self.pendentes = 0  # Quantidade de frames esperando confirmação
         for x in range(0, self.janela + 1):
             self.seq.append(x)
-        self.seq = self.seq*100
+        self.seq = self.seq * 100
         self.Sn = 0  # Variável para referenciar qual o proximo frame a ser enviado
 
     # Função para simular um timeout
     # Irá retornar todos os valores para o começo da janela para começar a reenviar todos os frames
     def timeout(self):
-        print('Note over A: TIMEOUT(', self.primeiro_janela+1, ')', sep="")
+        print('Note over A: TIMEOUT(', self.primeiro_janela + 1, ')', sep="")
         self.prox_envio = self.primeiro_janela
         self.pendentes = 0
         self.ultimo_janela = self.primeiro_janela
@@ -66,10 +66,10 @@ class Receiver:
         self.Rn = 0  # Variavel para controlar qual o frame esperado.
 
         aux = (2 ** seq_bits) - 1
-        for x in range(0, aux+1):
+        for x in range(0, aux + 1):
             self.seq.append(x)
 
-        self.seq = self.seq*100
+        self.seq = self.seq * 100
 
     # Função para simular o recebimento de um ack
     # Irá primeiramente checar se o ack é duplicado e adicionalo novamente a lista de recebidos
@@ -93,21 +93,31 @@ class Receiver:
 
         return False
 
-# Função que checa se o frame recebido é duplicado
-# Garante que nao checara o numero errado caso tenham sido enviados menos frames que a o tamanho da janela
+    # Função que checa se o frame recebido é duplicado
+    # Garante que nao checara o numero errado caso tenham sido enviados menos frames que a o tamanho da janela
     def check_duplicate(self, frame):
+        janela = 2 ** self.seq_bits - 1
         aux = self.Rn - 1
-        if self.Rn < (2 ** self.seq_bits) - 1:
-            while aux >= 0:
-                if frame == self.seq[aux]:
-                    return True
-                aux -= 1
-        else:
-            while aux >= 0 and aux > self.Rn - (2 ** self.seq_bits) - 1:
-                if frame == self.seq[aux]:
-                    return True
-                aux -= 1
+        aux2 = self.get_pos(frame)
+        aux3 = self.get_pos(frame) - janela
+        if aux3 < 0:
+            aux3 = 0
+        if aux2 == 0:
+            return False
+
+        while aux2 > aux3:
+            if frame == self.seq[aux2-1]:
+                return True
+            aux2 -= 1
         return False
+
+    def get_pos(self, frame):
+        x = self.Rn
+
+        while x <= self.Rn + (2 ** self.seq_bits) - 1:
+            if frame == self.seq[x]:
+                return x
+            x += 1
 
 
 # Simula a execução completa
@@ -137,7 +147,7 @@ def executar_gbn(num_frames, seq_bits, pkt_loss):
                 if frame not in enviados:
                     print("A -x B : (", frame, ") Frame ", enviado, sep="")
                 else:
-                    print("A -x B : (", frame, ") Frame ", enviado," (RET)", sep="")
+                    print("A -x B : (", frame, ") Frame ", enviado, " (RET)", sep="")
 
             pacotes += 1
             enviados.append(frame)
