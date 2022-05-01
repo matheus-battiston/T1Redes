@@ -110,6 +110,7 @@ class Receiver:
         return False
 
 
+# Simula a execução completa
 def executar_gbn(num_frames, seq_bits, pkt_loss):
     sucesso = 0
     sender = Sender(seq_bits)
